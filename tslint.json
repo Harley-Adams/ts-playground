@@ -1,0 +1,8 @@
+{
+    "rulesDirectory": "../tslint-microsoft-contrib/dist/src",
+    "rules": {
+        // "no-listener-leaks": true,
+        "class-name": true,
+        "semicolon": true
+    }
+}
