@@ -7,7 +7,12 @@
   "devDependencies": {
     "ts-loader": "^2.0.0",
     "typescript": "^2.1.6",
+    "typings": "^2.1.0",
     "webpack": "^2.2.1"
   },
-  "author": "Harley Adams"
+  "author": "Harley Adams",
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  }
 }
