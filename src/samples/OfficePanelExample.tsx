@@ -11,31 +11,16 @@ export default class OfficePanelExample extends React.Component<any, any> {
     };
   }
 
-  /*public render() {
-    return (
-      <div>
-        <Button description='Opens the Sample Panel' onClick={ this._showPanel.bind(this) }>Open Panel</Button>
-        <Panel
-          isOpen={ this.state.showPanel }
-          isLightDismiss={ true }
-          onDismiss={ this._closePanel.bind(this) }
-          headerText='Light Dismiss Panel'
-        >
-          <span className='ms-font-m'>Light Dismiss usage is meant for the Contextual Menu on mobile sized breakpoints.</span>
-        </Panel>
-      </div>
-    );
-  }*/
-
   public render() {
     return (
       <div>
         <Button description='Opens the Sample Panel' onClick={ this._showPanel.bind(this) }>Open Panel</Button>
         <Panel
           isOpen={ this.state.showPanel }
-          type={ PanelType.smallFixedFar }
+          type={ PanelType.extraLarge }
           onDismiss={ this._closePanel.bind(this) }
           headerText='Panel - Small, right-aligned, fixed'
+          closeButtonAriaLabel='Close'
         >
           <span className='ms-font-m'>Content goes here fucuucucu.</span>
         </Panel>

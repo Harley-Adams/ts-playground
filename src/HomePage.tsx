@@ -28,7 +28,6 @@ class HomePage extends React.Component<{}, HomePageState> {
 
   render() {
     return  <div>
-                <OfficePanelExample />
                 <Hello name="Harley"/>
                 <Button> Test </Button>
             </div>;
