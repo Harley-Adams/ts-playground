@@ -1,0 +1,38 @@
+.home-mainbutton.ms-Button.ms-Button--primary {
+    background-color: #008272;
+    height: 100%;
+}
+.home-mainbutton.ms-Button.ms-Button--primary:hover {
+    background-color: #009983;
+}
+
+.AppBar {
+    font-family: "Segoe UI",Helvetica,Tahoma,Geneva,Verdana,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    position: fixed;
+    height: 50px;
+    font-size: 12px;
+    background-color: #050708;
+    cursor: default;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 4000;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 0;
+}
+
+.homeButtonWrapper {
+    float: left;
+    height: 50px;
+    position: relative;
+}
+
+.content {
+    padding: 50px 0 0 0;
+}
+
+body {
+    margin: 0
+}

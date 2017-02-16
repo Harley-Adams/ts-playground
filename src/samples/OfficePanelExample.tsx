@@ -18,6 +18,7 @@ export default class OfficePanelExample extends React.Component<any, any> {
         <Panel
           isOpen={ this.state.showPanel }
           type={ PanelType.extraLarge }
+          hasCloseButton={true}
           onDismiss={ this._closePanel.bind(this) }
           headerText='Panel - Small, right-aligned, fixed'
           closeButtonAriaLabel='Close'
@@ -31,7 +32,9 @@ export default class OfficePanelExample extends React.Component<any, any> {
   private _showPanel() {
     this.setState({ showPanel: true });
   }
+
   private _closePanel() {
+    debugger;
     this.setState({ showPanel: false });
   }
 }

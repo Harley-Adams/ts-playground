@@ -14,7 +14,7 @@
   },
   "author": "Harley Adams",
   "dependencies": {
-    "office-ui-fabric-react": "^1.7.1",
+    "office-ui-fabric-react": "^1.9.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
   }

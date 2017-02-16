@@ -1,9 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
+import AppBar from "./AppBar";
 import Hello from "./Hello";
 import SettingsPanel from "./SettingsPanel"
-import { Button, MessageBar, MessageBarType, Link } from 'office-ui-fabric-react';
+import { PrimaryButton, MessageBar, MessageBarType, Link } from 'office-ui-fabric-react';
 import OfficePanelExample from "./samples/OfficePanelExample";
+import OfficeDialogExample from "./samples/OfficeDialogExample";
 
 interface HomePageState{
     settingsPaneOpen: boolean
@@ -28,19 +30,14 @@ class HomePage extends React.Component<{}, HomePageState> {
 
   render() {
     return  <div>
-                <OfficePanelExample />
-                <Hello name="Harley"/>
-                <Button> Test </Button>
+                <AppBar />
+                <div className="content">
+                    <OfficeDialogExample />
+                    <OfficePanelExample />
+                    <Hello name="Harley"/>
+                </div>
             </div>;
   }
 }
-/*
 
-                <Button description='Opens the Sample Panel' onClick={ this.toggleShowSettingsPane.bind(this) }>Open Panel</Button>
-                <SettingsPanel open={this.state.settingsPaneOpen} toggleShowSettingsPane={this.toggleShowSettingsPane}/>
-
-                <MessageBar actions={ <div><Button>Yes</Button><Button>No</Button></div> } messageBarType={ MessageBarType.success } isMultiline={ false }>
-                    Success <Link href='www.bing.com'>Visit our website</Link>
-                </MessageBar>
-*/
 export default HomePage;
