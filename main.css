@@ -1,9 +1,22 @@
 .home-mainbutton.ms-Button.ms-Button--primary {
     background-color: #008272;
     height: 100%;
+    font-size: 24px;
 }
 .home-mainbutton.ms-Button.ms-Button--primary:hover {
     background-color: #009983;
+}
+
+.MoreOptionsButton.ms-Button.ms-Button--default {
+    background-color: #008272;
+    font-size: 24px;
+    height: 50px;
+}
+
+.farButtonsWrapper {
+    float: right;
+    height: 100%;
+    position: relative;
 }
 
 .AppBar {
