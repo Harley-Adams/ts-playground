@@ -3,7 +3,7 @@
     padding-top: 7px;
 }
 
-.homeLink {
+.ms-Link.homeLink {
     background-color: rgba(0,0,0,0.002);
     border: 1px solid transparent;
     outline: 1px solid rgba(0,0,0,0.002);
@@ -20,17 +20,17 @@
     outline: none;
 }
 
-.homeLink:hover
+.ms-Link.homeLink:not(.is-disabled):hover
 {
     background-color: #009983;
     color: white;
 }
-.homeLink:focus {
+.ms-Link.homeLink:not(.is-disabled):focus {
     border: 1px black;
     background-color: #008272;
     color: white;
 }
-.homeLink:active {
+.ms-Link.homeLink:not(.is-disabled):active {
     background-color: #1a685f;
     color: white;
 }

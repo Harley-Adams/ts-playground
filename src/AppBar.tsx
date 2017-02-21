@@ -8,7 +8,7 @@ class AppBar extends React.Component<void, void> {
     render() {
         return  <div className="AppBar">
                     <div className="homeButtonWrapper">
-                        <a className="homeLink" href="https://www.sway.com"> <span className="homeText">Home </span> </a>
+                        <Link className="homeLink" href="https://www.sway.com"> <span className="homeText">Home </span> </Link>
                     </div>
                     <div className="farButtonsWrapper">
                         <MoreOptionsMenu> </MoreOptionsMenu>
