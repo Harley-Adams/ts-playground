@@ -1,11 +1,47 @@
-.home-mainbutton.ms-Button.ms-Button--primary {
+.homeText {
+    float: left;
+    padding-top: 7px;
+}
+
+.homeLink {
+    background-color: rgba(0,0,0,0.002);
+    border: 1px solid transparent;
+    outline: 1px solid rgba(0,0,0,0.002);
+    box-sizing: border-box;
     background-color: #008272;
-    height: 100%;
+    color: #fff;
+    position: relative;
+    padding: 0px 20px;
+    height: 50px;
+    float: left;
+    text-decoration: none;
     font-size: 24px;
+    margin-right: 14px;
+    outline: none;
 }
-.home-mainbutton.ms-Button.ms-Button--primary:hover {
+
+.homeLink:hover
+{
     background-color: #009983;
+    color: white;
 }
+.homeLink:focus {
+    border: 1px black;
+    background-color: #008272;
+    color: white;
+}
+.homeLink:active {
+    background-color: #1a685f;
+    color: white;
+}
+
+.homeButtonWrapper {
+    float: left;
+    height: 50px;
+    padding: 0, 20px;
+    position: relative;
+}
+
 
 .MoreOptionsButton.ms-Button.ms-Button--default {
     background-color: #008272;
@@ -36,11 +72,6 @@
     border-width: 0;
 }
 
-.homeButtonWrapper {
-    float: left;
-    height: 50px;
-    position: relative;
-}
 
 .content {
     padding: 50px 0 0 0;
