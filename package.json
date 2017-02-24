@@ -6,14 +6,16 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "@types/react": "^15.0.9",
+    "@types/react": "^15.0.12",
     "@types/react-dom": "^0.14.23",
-    "ts-loader": "^2.0.0",
-    "typescript": "^2.1.6",
+    "ts-loader": "^2.0.1",
+    "typescript": "^2.2.1",
     "webpack": "^2.2.1"
   },
   "author": "Harley Adams",
   "dependencies": {
+    "mobx": "^3.1.0",
+    "mobx-react": "^4.1.0",
     "office-ui-fabric-react": "^1.9.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2"

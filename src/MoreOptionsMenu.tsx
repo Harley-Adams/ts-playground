@@ -5,20 +5,19 @@ import {PrimaryButton, ContextualMenu, DirectionalHint, Button} from 'office-ui-
 export default class MoreOptionsMenu extends React.Component<any, any> {
   constructor() {
     super();
-    this.state = {
-      isContextMenuVisible: false
-    };
-    this._onClick = this._onClick.bind(this);
-    this._onDismiss = this._onDismiss.bind(this);
   }
 
+  state = {
+    isContextMenuVisible: false
+  };
+  
   contextButton: HTMLElement;
   
   public render() {
     return (
       <div>
         <Button 
-          onClick={ this._onClick } id='ContextualMenuButton1' 
+          onClick={ this.onClick } id='ContextualMenuButton1' 
           ref={ (ref:React.ReactInstance) => this.contextButton = ReactDOM.findDOMNode(ref) as HTMLElement }
           className="MoreOptionsButton"> 
           More Options 
@@ -27,7 +26,7 @@ export default class MoreOptionsMenu extends React.Component<any, any> {
           <ContextualMenu
             shouldFocusOnMount={ true }
             target={ this.contextButton }
-            onDismiss={ this._onDismiss }
+            onDismiss={ this.onDismiss }
             directionalHint={ DirectionalHint.bottomRightEdge }
             directionalHintFixed={true}
             items={
@@ -110,11 +109,11 @@ export default class MoreOptionsMenu extends React.Component<any, any> {
     );
   }
 
-  private _onClick(event: React.MouseEvent<any>) {
+  private onClick = (event: React.MouseEvent<any>) => {
     this.setState({ isContextMenuVisible: true });
   }
 
-  private _onDismiss(event: any) {
+  private onDismiss = (event: any) => {
     this.setState({ isContextMenuVisible: false });
   }
 }

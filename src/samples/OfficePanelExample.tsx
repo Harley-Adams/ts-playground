@@ -1,25 +1,28 @@
 import * as React from "react";
 import * as ReactDOM from 'react-dom';
 import { Panel, Button, PanelType } from 'office-ui-fabric-react';
+import { observable, computed } from 'mobx';
+import { observer } from 'mobx-react';
 
+@observer
 export default class OfficePanelExample extends React.Component<any, any> {
 
-  constructor() {
-    super();
-    this.state = {
-      showPanel: false
-    };
+  @observable isPanelShown = false;
+
+  @computed get isPanelOpen() {
+    return this.isPanelShown;
   }
 
   public render() {
     return (
       <div>
-        <Button description='Opens the Sample Panel' onClick={ this._showPanel.bind(this) }>Open Panel</Button>
+        <Button description='Opens the Sample Panel' onClick={ this.showPanel }>Open Panel</Button>
         <Panel
-          isOpen={ this.state.showPanel }
+          isOpen={ this.isPanelShown }
           type={ PanelType.extraLarge }
           hasCloseButton={true}
-          onDismiss={ this._closePanel.bind(this) }
+          onDismiss={ this.closePanel }
+          isLightDismiss={true}
           headerText='Panel - Small, right-aligned, fixed'
           closeButtonAriaLabel='Close'
         >
@@ -29,12 +32,11 @@ export default class OfficePanelExample extends React.Component<any, any> {
     );
   }
 
-  private _showPanel() {
-    this.setState({ showPanel: true });
+  private showPanel = () => {
+    this.isPanelShown = true;
   }
 
-  private _closePanel() {
-    debugger;
-    this.setState({ showPanel: false });
+  private closePanel = () => {
+    this.isPanelShown = false;
   }
 }
