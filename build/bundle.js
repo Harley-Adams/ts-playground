@@ -5835,11 +5835,17 @@ module.exports = shallowEqual;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 registerGlobals();
 exports.extras = {
     allowStateChanges: allowStateChanges,
@@ -5863,6 +5869,7 @@ exports.extras = {
 if (typeof __MOBX_DEVTOOLS_GLOBAL_HOOK__ === "object") {
     __MOBX_DEVTOOLS_GLOBAL_HOOK__.injectMobx(module.exports);
 }
+module.exports.default = module.exports;
 var actionFieldDecorator = createClassPropertyDecorator(function (target, key, value, args, originalDescriptor) {
     var actionName = (args && args.length === 1) ? args[0] : (value.name || key || "<unnamed action>");
     var wrappedAction = action(actionName, value);
@@ -8163,10 +8170,7 @@ function defineComputedPropertyFromComputedValue(adm, propName, computedValue) {
 var observablePropertyConfigs = {};
 var computedPropertyConfigs = {};
 function generateObservablePropConfig(propName) {
-    var config = observablePropertyConfigs[propName];
-    if (config)
-        return config;
-    return observablePropertyConfigs[propName] = {
+    return observablePropertyConfigs[propName] || (observablePropertyConfigs[propName] = {
         configurable: true,
         enumerable: true,
         get: function () {
@@ -8175,13 +8179,10 @@ function generateObservablePropConfig(propName) {
         set: function (v) {
             setPropertyValue(this, propName, v);
         }
-    };
+    });
 }
 function generateComputedPropConfig(propName) {
-    var config = computedPropertyConfigs[propName];
-    if (config)
-        return config;
-    return computedPropertyConfigs[propName] = {
+    return computedPropertyConfigs[propName] || (computedPropertyConfigs[propName] = {
         configurable: true,
         enumerable: false,
         get: function () {
@@ -8190,7 +8191,7 @@ function generateComputedPropConfig(propName) {
         set: function (v) {
             return this.$mobx.values[propName].set(v);
         }
-    };
+    });
 }
 function setPropertyValue(instance, name, newValue) {
     var adm = instance.$mobx;
@@ -8335,6 +8336,7 @@ var ObservableValue = (function (_super) {
 }(BaseAtom));
 ObservableValue.prototype[primitiveSymbol()] = ObservableValue.prototype.valueOf;
 var isObservableValue = createInstanceofPredicate("ObservableValue", ObservableValue);
+exports.isBoxedObservable = isObservableValue;
 function getAtom(thing, property) {
     if (typeof thing === "object" && thing !== null) {
         if (isObservableArray(thing)) {
@@ -8393,6 +8395,7 @@ function getDebugName(thing, property) {
 }
 function createClassPropertyDecorator(onInitialize, get, set, enumerable, allowCustomArguments) {
     function classPropertyDecorator(target, key, descriptor, customArgs, argLen) {
+        if (argLen === void 0) { argLen = 0; }
         invariant(allowCustomArguments || quacksLikeADecorator(arguments), "This function is a decorator, but it wasn't invoked like a decorator");
         if (!descriptor) {
             var newDescriptor = {
@@ -19143,8 +19146,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _mobx = __webpack_require__(2);
 
-	var _mobx2 = _interopRequireDefault(_mobx);
-
 	var _react = __webpack_require__(3);
 
 	var _react2 = _interopRequireDefault(_react);
@@ -19267,7 +19268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function makePropertyObservableReference(propName) {
 	      var valueHolder = this[propName];
-	      var atom = new _mobx2.default.Atom("reactive " + propName);
+	      var atom = new _mobx.Atom("reactive " + propName);
 	      Object.defineProperty(this, propName, {
 	        configurable: true, enumerable: true,
 	        get: function get() {
@@ -19298,7 +19299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var isRenderingPending = false;
 
 	    var initialRender = function initialRender() {
-	      reaction = new _mobx2.default.Reaction(initialName + '#' + rootNodeID + '.render()', function () {
+	      reaction = new _mobx.Reaction(initialName + '#' + rootNodeID + '.render()', function () {
 	        if (!isRenderingPending) {
 	          // N.B. Getting here *before mounting* means that a component constructor has side effects (see the relevant test in misc.js)
 	          // This unidiomatic React usage but React will correctly warn about this so we continue as usual
@@ -19333,7 +19334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (isDevtoolsEnabled) {
 	          _this.__$mobRenderStart = Date.now();
 	        }
-	        rendering = _mobx2.default.extras.allowStateChanges(false, baseRender);
+	        rendering = _mobx.extras.allowStateChanges(false, baseRender);
 	        if (isDevtoolsEnabled) {
 	          _this.__$mobRenderEnd = Date.now();
 	        }
@@ -23410,7 +23411,7 @@ var DetailsHeader = (function (_super) {
                         }) }))) : (null),
                 GroupSpacer_1.GroupSpacer({ count: groupNestingDepth - 1 }),
                 columns.map(function (column, columnIndex) { return (React.createElement("div", { key: column.key, className: 'ms-DetailsHeader-cellSizeWrapper' },
-                    React.createElement("div", { className: 'ms-DetailsHeader-cellWrapper', role: 'columnheader' },
+                    React.createElement("div", { className: 'ms-DetailsHeader-cellWrapper', role: 'columnheader', "aria-sort": column.isSorted ? (column.isSortedDescending ? 'descending' : 'ascending') : 'none' },
                         React.createElement("button", { key: column.fieldName, disabled: column.columnActionsMode === DetailsList_Props_1.ColumnActionsMode.disabled, className: Utilities_1.css('ms-DetailsHeader-cell', column.headerClassName, {
                                 'is-actionable': column.columnActionsMode !== DetailsList_Props_1.ColumnActionsMode.disabled,
                                 'is-empty': !column.name,
@@ -26905,13 +26906,13 @@ exports.Label = Label;
 /* tslint:disable */
 var load_themed_styles_1 = __webpack_require__(3);
 var styles = {
-    root: 'root_b3f71da0',
-    isRequired: 'isRequired_3977a723',
-    isDisabled: 'isDisabled_9c7f6025',
+    root: 'root_7ae4628d',
+    isRequired: 'isRequired_ff4abe9b',
+    isDisabled: 'isDisabled_e58d0979',
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = styles;
-load_themed_styles_1.loadStyles([{ "rawString": ".root_b3f71da0{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;font-weight:400;box-sizing:border-box;margin:0;padding:0;box-shadow:none;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";box-sizing:border-box;display:block;padding:5px 0}.isRequired_3977a723::after{content:' *';color:" }, { "theme": "error", "defaultValue": "#a80000" }, { "rawString": "}.isDisabled_9c7f6025{color:" }, { "theme": "neutralTertiary", "defaultValue": "#a6a6a6" }, { "rawString": "}" }]);
+load_themed_styles_1.loadStyles([{ "rawString": ".root_7ae4628d{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;font-weight:400;box-sizing:border-box;margin:0;padding:0;box-shadow:none;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";box-sizing:border-box;display:block;padding:5px 0}.isRequired_ff4abe9b::after{content:' *';color:" }, { "theme": "error", "defaultValue": "#a80000" }, { "rawString": "}.isDisabled_e58d0979{color:" }, { "theme": "neutralTertiary", "defaultValue": "#a6a6a6" }, { "rawString": "}" }]);
 /* tslint:enable */ 
 
 //# sourceMappingURL=Label.scss.js.map
@@ -28544,12 +28545,10 @@ exports.Panel = Panel;
 
 /* tslint:disable */
 var load_themed_styles_1 = __webpack_require__(3);
-var styles = {
-    'ms-Panel--hasCloseButton': 'ms-Panel--hasCloseButton_ef6e3d98',
-};
+var styles = {};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = styles;
-load_themed_styles_1.loadStyles([{ "rawString": ".ms-Panel{pointer-events:inherit;overflow:hidden}.ms-Panel .ms-Panel-main{position:absolute;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}.ms-Panel{display:none;pointer-events:none}.ms-Panel .ms-Overlay{display:none;pointer-events:none;opacity:1;cursor:pointer;-webkit-transition:opacity 367ms cubic-bezier(.1,.9,.2,1);transition:opacity 367ms cubic-bezier(.1,.9,.2,1)}.ms-Panel-main{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": ";bottom:0;position:fixed;top:0;display:none;width:100%}html[dir=ltr] .ms-Panel-main{right:0}html[dir=rtl] .ms-Panel-main{left:0}@media (min-width:480px){.ms-Panel-main{border-left:1px solid " }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": ";border-right:1px solid " }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": ";pointer-events:auto;width:340px;box-shadow:-30px 0 30px -30px rgba(0,0,0,.2)}html[dir=ltr] .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel-main{right:auto}}.ms-Panel.ms-Panel--sm .ms-Panel-main{width:272px}@media (min-width:480px){.ms-Panel.ms-Panel--sm .ms-Panel-main{width:340px}}.ms-Panel.ms-Panel--smLeft .ms-Panel-main{width:272px}html[dir=ltr] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{right:auto}html[dir=rtl] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{left:auto}html[dir=ltr] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{left:0}html[dir=rtl] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{right:0}.ms-Panel.ms-Panel--smFluid .ms-Panel-main{width:100%}@media (min-width:640px){.ms-Panel.ms-Panel--lg .ms-Panel-main,.ms-Panel.ms-Panel--md .ms-Panel-main,.ms-Panel.ms-Panel--xl .ms-Panel-main{width:auto}html[dir=ltr] .ms-Panel.ms-Panel--lg .ms-Panel-main,html[dir=ltr] .ms-Panel.ms-Panel--md .ms-Panel-main,html[dir=ltr] .ms-Panel.ms-Panel--xl .ms-Panel-main{left:48px}html[dir=rtl] .ms-Panel.ms-Panel--lg .ms-Panel-main,html[dir=rtl] .ms-Panel.ms-Panel--md .ms-Panel-main,html[dir=rtl] .ms-Panel.ms-Panel--xl .ms-Panel-main{right:48px}}@media (min-width:1024px){.ms-Panel.ms-Panel--md .ms-Panel-main{width:643px}html[dir=ltr] .ms-Panel.ms-Panel--md .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel.ms-Panel--md .ms-Panel-main{right:auto}}@media (min-width:1366px){html[dir=ltr] .ms-Panel.ms-Panel--lg .ms-Panel-main{left:428px}html[dir=rtl] .ms-Panel.ms-Panel--lg .ms-Panel-main{right:428px}}@media (min-width:1366px){.ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{width:940px}html[dir=ltr] .ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{right:auto}}@media (min-width:1366px){html[dir=ltr] .ms-Panel.ms-Panel--xl .ms-Panel-main{left:176px}html[dir=rtl] .ms-Panel.ms-Panel--xl .ms-Panel-main{right:176px}}.ms-Panel.is-open{display:block}.ms-Panel.is-open .ms-Panel-main{opacity:1;pointer-events:auto;display:block}.ms-Panel.is-open .ms-Overlay{display:block;pointer-events:auto}@media screen and (-ms-high-contrast:active){.ms-Panel.is-open .ms-Overlay{opacity:0}}.ms-Panel.is-open.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:.1s;animation-duration:.1s}.ms-Panel.is-open.ms-Panel-animateOut .ms-Overlay{display:none}@media (min-width:480px){.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-name:fadeIn,slideLeftIn40;animation-name:fadeIn,slideLeftIn40;-webkit-animation-duration:367ms;-moz-animation-duration:367ms;-ms-animation-duration:367ms;-o-animation-duration:367ms;-webkit-animation-timing-function:cubic-bezier(.1,.9,.2,1);animation-timing-function:cubic-bezier(.1,.9,.2,1);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:267ms;animation-duration:267ms}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-name:fadeOut,slideRightOut40;animation-name:fadeOut,slideRightOut40;-webkit-animation-duration:167ms;-moz-animation-duration:167ms;-ms-animation-duration:167ms;-o-animation-duration:167ms;-webkit-animation-timing-function:cubic-bezier(.1,.25,.75,.9);animation-timing-function:cubic-bezier(.1,.25,.75,.9);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateOut .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-name:fadeIn,slideRightIn40;animation-name:fadeIn,slideRightIn40;-webkit-animation-duration:367ms;-moz-animation-duration:367ms;-ms-animation-duration:367ms;-o-animation-duration:367ms;-webkit-animation-timing-function:cubic-bezier(.1,.9,.2,1);animation-timing-function:cubic-bezier(.1,.9,.2,1);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:267ms;animation-duration:267ms}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-name:fadeOut,slideLeftOut40;animation-name:fadeOut,slideLeftOut40;-webkit-animation-duration:167ms;-moz-animation-duration:167ms;-ms-animation-duration:167ms;-o-animation-duration:167ms;-webkit-animation-timing-function:cubic-bezier(.1,.25,.75,.9);animation-timing-function:cubic-bezier(.1,.25,.75,.9);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateOut .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open .ms-Overlay{cursor:pointer;opacity:1;pointer-events:auto}}@media screen and (min-width:480px) and (-ms-high-contrast:active){.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Overlay,.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Overlay{opacity:0;-webkit-animation-name:none;animation-name:none}}.ms-Panel-closeButton{background:0 0;border:0;cursor:pointer;position:absolute;top:0;height:40px;width:40px;line-height:40px;padding:0;color:" }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": ";font-size:16px}html[dir=ltr] .ms-Panel-closeButton{right:8px}html[dir=rtl] .ms-Panel-closeButton{left:8px}.ms-Panel-closeButton:hover{color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": "}.ms-Panel-contentInner{position:absolute;top:0;bottom:0;left:0;right:0;padding:0 16px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-transform:translateZ(0);transform:translateZ(0)}.ms-Panel--hasCloseButton_ef6e3d98 .ms-Panel-contentInner{top:40px}@media (min-width:640px){.ms-Panel-contentInner{padding:0 32px 20px}}@media (min-width:1366px){.ms-Panel-contentInner{padding:0 40px 20px}}.ms-Panel-headerText{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:21px;font-weight:100;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";margin:10px 0;padding:4px 0;line-height:1;text-overflow:ellipsis;overflow:hidden}@media (min-width:1024px){.ms-Panel-headerText{margin-top:30px}}" }]);
+load_themed_styles_1.loadStyles([{ "rawString": ".ms-Panel{pointer-events:inherit;overflow:hidden}.ms-Panel .ms-Panel-main{position:absolute;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}.ms-Panel{display:none;pointer-events:none}.ms-Panel .ms-Overlay{display:none;pointer-events:none;opacity:1;cursor:pointer;-webkit-transition:opacity 367ms cubic-bezier(.1,.9,.2,1);transition:opacity 367ms cubic-bezier(.1,.9,.2,1)}.ms-Panel-main{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": ";bottom:0;position:fixed;top:0;display:none;width:100%}html[dir=ltr] .ms-Panel-main{right:0}html[dir=rtl] .ms-Panel-main{left:0}@media (min-width:480px){.ms-Panel-main{border-left:1px solid " }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": ";border-right:1px solid " }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": ";pointer-events:auto;width:340px;box-shadow:-30px 0 30px -30px rgba(0,0,0,.2)}html[dir=ltr] .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel-main{right:auto}}.ms-Panel.ms-Panel--sm .ms-Panel-main{width:272px}@media (min-width:480px){.ms-Panel.ms-Panel--sm .ms-Panel-main{width:340px}}.ms-Panel.ms-Panel--smLeft .ms-Panel-main{width:272px}html[dir=ltr] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{right:auto}html[dir=rtl] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{left:auto}html[dir=ltr] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{left:0}html[dir=rtl] .ms-Panel.ms-Panel--smLeft .ms-Panel-main{right:0}.ms-Panel.ms-Panel--smFluid .ms-Panel-main{width:100%}@media (min-width:640px){.ms-Panel.ms-Panel--lg .ms-Panel-main,.ms-Panel.ms-Panel--md .ms-Panel-main,.ms-Panel.ms-Panel--xl .ms-Panel-main{width:auto}html[dir=ltr] .ms-Panel.ms-Panel--lg .ms-Panel-main,html[dir=ltr] .ms-Panel.ms-Panel--md .ms-Panel-main,html[dir=ltr] .ms-Panel.ms-Panel--xl .ms-Panel-main{left:48px}html[dir=rtl] .ms-Panel.ms-Panel--lg .ms-Panel-main,html[dir=rtl] .ms-Panel.ms-Panel--md .ms-Panel-main,html[dir=rtl] .ms-Panel.ms-Panel--xl .ms-Panel-main{right:48px}}@media (min-width:1024px){.ms-Panel.ms-Panel--md .ms-Panel-main{width:643px}html[dir=ltr] .ms-Panel.ms-Panel--md .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel.ms-Panel--md .ms-Panel-main{right:auto}}@media (min-width:1366px){html[dir=ltr] .ms-Panel.ms-Panel--lg .ms-Panel-main{left:428px}html[dir=rtl] .ms-Panel.ms-Panel--lg .ms-Panel-main{right:428px}}@media (min-width:1366px){.ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{width:940px}html[dir=ltr] .ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{left:auto}html[dir=rtl] .ms-Panel.ms-Panel--lg.ms-Panel--fixed .ms-Panel-main{right:auto}}@media (min-width:1366px){html[dir=ltr] .ms-Panel.ms-Panel--xl .ms-Panel-main{left:176px}html[dir=rtl] .ms-Panel.ms-Panel--xl .ms-Panel-main{right:176px}}.ms-Panel.is-open{display:block}.ms-Panel.is-open .ms-Panel-main{opacity:1;pointer-events:auto;display:block}.ms-Panel.is-open .ms-Overlay{display:block;pointer-events:auto}@media screen and (-ms-high-contrast:active){.ms-Panel.is-open .ms-Overlay{opacity:0}}.ms-Panel.is-open.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:.1s;animation-duration:.1s}.ms-Panel.is-open.ms-Panel-animateOut .ms-Overlay{display:none}@media (min-width:480px){.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-name:fadeIn,slideLeftIn40;animation-name:fadeIn,slideLeftIn40;-webkit-animation-duration:367ms;-moz-animation-duration:367ms;-ms-animation-duration:367ms;-o-animation-duration:367ms;-webkit-animation-timing-function:cubic-bezier(.1,.9,.2,1);animation-timing-function:cubic-bezier(.1,.9,.2,1);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:267ms;animation-duration:267ms}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-name:fadeOut,slideRightOut40;animation-name:fadeOut,slideRightOut40;-webkit-animation-duration:167ms;-moz-animation-duration:167ms;-ms-animation-duration:167ms;-o-animation-duration:167ms;-webkit-animation-timing-function:cubic-bezier(.1,.25,.75,.9);animation-timing-function:cubic-bezier(.1,.25,.75,.9);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateOut .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Panel-main{-webkit-animation-name:fadeIn,slideRightIn40;animation-name:fadeIn,slideRightIn40;-webkit-animation-duration:367ms;-moz-animation-duration:367ms;-ms-animation-duration:367ms;-o-animation-duration:367ms;-webkit-animation-timing-function:cubic-bezier(.1,.9,.2,1);animation-timing-function:cubic-bezier(.1,.9,.2,1);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeIn;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeIn;animation-fill-mode:both;-webkit-animation-duration:267ms;animation-duration:267ms}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateOut .ms-Panel-main{-webkit-animation-name:fadeOut,slideLeftOut40;animation-name:fadeOut,slideLeftOut40;-webkit-animation-duration:167ms;-moz-animation-duration:167ms;-ms-animation-duration:167ms;-o-animation-duration:167ms;-webkit-animation-timing-function:cubic-bezier(.1,.25,.75,.9);animation-timing-function:cubic-bezier(.1,.25,.75,.9);-webkit-animation-fill-mode:both;animation-fill-mode:both}.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateOut .ms-Overlay{-webkit-animation-duration:367ms;-webkit-animation-name:fadeOut;-webkit-animation-fill-mode:both;animation-duration:367ms;animation-name:fadeOut;animation-fill-mode:both;-webkit-animation-duration:167ms;animation-duration:167ms}.ms-Panel.is-open .ms-Overlay{cursor:pointer;opacity:1;pointer-events:auto}}@media screen and (min-width:480px) and (-ms-high-contrast:active){.ms-Panel.is-open.ms-Panel--openLeft.ms-Panel-animateIn .ms-Overlay,.ms-Panel.is-open.ms-Panel--openRight.ms-Panel-animateIn .ms-Overlay{opacity:0;-webkit-animation-name:none;animation-name:none}}.ms-Panel-closeButton{background:0 0;border:0;cursor:pointer;position:absolute;top:0;height:40px;width:40px;line-height:40px;padding:0;color:" }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": ";font-size:16px}html[dir=ltr] .ms-Panel-closeButton{right:8px}html[dir=rtl] .ms-Panel-closeButton{left:8px}.ms-Panel-closeButton:hover{color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": "}.ms-Panel-contentInner{position:absolute;top:0;bottom:0;left:0;right:0;padding:0 16px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;-webkit-transform:translateZ(0);transform:translateZ(0)}.ms-Panel--hasCloseButton .ms-Panel-contentInner{top:40px}@media (min-width:640px){.ms-Panel-contentInner{padding:0 32px 20px}}@media (min-width:1366px){.ms-Panel-contentInner{padding:0 40px 20px}}.ms-Panel-headerText{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:21px;font-weight:100;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";margin:10px 0;padding:4px 0;line-height:1;text-overflow:ellipsis;overflow:hidden}@media (min-width:1024px){.ms-Panel-headerText{margin-top:30px}}" }]);
 /* tslint:enable */ 
 
 //# sourceMappingURL=Panel.scss.js.map
@@ -28601,17 +28600,6 @@ var Image_1 = __webpack_require__(25);
 var Persona_Props_1 = __webpack_require__(65);
 var PersonaConsts_1 = __webpack_require__(66);
 __webpack_require__(334);
-/** Regex to detect words within paraenthesis in a string where gi implies global and case-insensitive. */
-var CHARS_WITHIN_PARENTHESIS_REGEX = new RegExp('\\(([^)]*)\\)', 'gi');
-/**
- *  Matches any non-word characters with respect to the Unicode codepoints; generated by
- * https://mothereff.in/regexpu for regex /\W /u where u stands for Unicode support (ES6 feature).
- * More info here: http://stackoverflow.com/questions/280712/javascript-unicode-regexes.
- * gi implies global and case-insensitive.
- */
-var UNICODE_ALPHANUMERIC_CHARS_REGEX = new RegExp('(?:[\0-/:-@\[-\^`\{-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]) ', 'gi');
-/** Regex to detect multiple spaces in a string where gi implies global and case-insensitive. */
-var MULTIPLE_WHITESPACES_REGEX_TOKEN = new RegExp('\\s+', 'gi');
 // The RGB color swatches
 var COLOR_SWATCHES_LOOKUP = [
     Persona_Props_1.PersonaInitialsColor.lightGreen,
@@ -28643,7 +28631,7 @@ var Persona = (function (_super) {
     Persona.prototype.render = function () {
         var _a = this.props, className = _a.className, size = _a.size, imageUrl = _a.imageUrl, imageInitials = _a.imageInitials, initialsColor = _a.initialsColor, presence = _a.presence, primaryText = _a.primaryText, secondaryText = _a.secondaryText, tertiaryText = _a.tertiaryText, optionalText = _a.optionalText, hidePersonaDetails = _a.hidePersonaDetails, imageShouldFadeIn = _a.imageShouldFadeIn;
         var isRTL = Utilities_1.getRTL();
-        imageInitials = imageInitials || this._getInitials(primaryText, isRTL);
+        imageInitials = imageInitials || Utilities_1.getInitials(primaryText, isRTL);
         initialsColor = initialsColor !== undefined && initialsColor !== null ? initialsColor : this._getColorFromName(primaryText);
         var presenceElement = null;
         if (presence !== Persona_Props_1.PersonaPresence.none) {
@@ -28681,34 +28669,6 @@ var Persona = (function (_super) {
                 React.createElement(Image_1.Image, { className: 'ms-Persona-image', imageFit: Image_1.ImageFit.cover, src: imageUrl, shouldFadeIn: imageShouldFadeIn, onLoadingStateChange: this._onPhotoLoadingStateChange }))),
             presenceElement,
             (!hidePersonaDetails || (size === Persona_Props_1.PersonaSize.tiny)) && personaDetails));
-    };
-    /** Get (up to 2 characters) initials based on display name of the persona. */
-    Persona.prototype._getInitials = function (displayName, isRtl) {
-        var initials = '';
-        if (displayName != null) {
-            // Do not consider the suffixes within parenthesis while computing the initials.
-            var personaName = displayName.replace(CHARS_WITHIN_PARENTHESIS_REGEX, '');
-            personaName = personaName.replace(UNICODE_ALPHANUMERIC_CHARS_REGEX, '');
-            personaName = personaName.replace(MULTIPLE_WHITESPACES_REGEX_TOKEN, ' ');
-            // Trim leading and trailing spaces if any.
-            personaName = personaName.trim();
-            var splits = personaName.split(' ');
-            if (splits.length === 2) {
-                initials += splits[0].charAt(0).toUpperCase();
-                initials += splits[1].charAt(0).toUpperCase();
-            }
-            else if (splits.length === 3) {
-                initials += splits[0].charAt(0).toUpperCase();
-                initials += splits[2].charAt(0).toUpperCase();
-            }
-            else if (splits.length !== 0) {
-                initials += splits[0].charAt(0).toUpperCase();
-            }
-        }
-        if (isRtl && initials.length > 1) {
-            return initials.charAt(1) + initials.charAt(0);
-        }
-        return initials;
     };
     Persona.prototype._getColorFromName = function (displayName) {
         var color = Persona_Props_1.PersonaInitialsColor.blue;
@@ -29916,7 +29876,6 @@ var TextField = (function (_super) {
         _this._onBlur = _this._onBlur.bind(_this);
         _this._delayedValidate = _this._async.debounce(_this._validate, _this.props.deferredValidationTime);
         _this._lastValidation = 0;
-        _this._willMountTriggerValidation = false;
         _this._isDescriptionAvailable = false;
         return _this;
     }
@@ -29931,8 +29890,9 @@ var TextField = (function (_super) {
         configurable: true
     });
     TextField.prototype.componentWillMount = function () {
-        this._willMountTriggerValidation = true;
-        this._validate(this.state.value);
+        if (this.props.validateOnLoad) {
+            this._validate(this.state.value);
+        }
     };
     TextField.prototype.componentDidMount = function () {
         this._isMounted = true;
@@ -30056,20 +30016,22 @@ var TextField = (function (_super) {
     });
     TextField.prototype._renderTextArea = function () {
         var textAreaProps = Utilities_1.getNativeProps(this.props, Utilities_1.textAreaProperties, ['defaultValue']);
-        return (React.createElement("textarea", __assign({ id: this._id, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : undefined, "aria-invalid": !!this.state.errorMessage, "aria-label": this.props.ariaLabel }, textAreaProps, { ref: this._resolveRef('_textElement'), value: this.state.value, onInput: this._onInputChange, onChange: this._onChange, className: this._textElementClassName, onFocus: this._onFocus, onBlur: this._onBlur })));
+        return (React.createElement("textarea", __assign({ id: this._id, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : undefined, "aria-invalid": !!this.state.errorMessage, "aria-label": this.props.ariaLabel }, textAreaProps, { ref: this._resolveRef('_textElement'), value: this.state.value, onInput: this._onInputChange, onChange: this._onInputChange, className: this._textElementClassName, onFocus: this._onFocus, onBlur: this._onBlur })));
     };
     TextField.prototype._renderInput = function () {
         var inputProps = Utilities_1.getNativeProps(this.props, Utilities_1.inputProperties, ['defaultValue']);
-        return (React.createElement("input", __assign({ type: 'text', id: this._id, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : undefined, "aria-label": this.props.ariaLabel, "aria-invalid": !!this.state.errorMessage }, inputProps, { ref: this._resolveRef('_textElement'), value: this.state.value, onInput: this._onInputChange, onChange: this._onChange, className: this._textElementClassName, onFocus: this._onFocus, onBlur: this._onBlur })));
+        return (React.createElement("input", __assign({ type: 'text', id: this._id, "aria-describedby": this._isDescriptionAvailable ? this._descriptionId : undefined, "aria-label": this.props.ariaLabel, "aria-invalid": !!this.state.errorMessage }, inputProps, { ref: this._resolveRef('_textElement'), value: this.state.value, onInput: this._onInputChange, onChange: this._onInputChange, className: this._textElementClassName, onFocus: this._onFocus, onBlur: this._onBlur })));
     };
     TextField.prototype._onInputChange = function (event) {
         var element = event.target;
         var value = element.value;
+        if (value === this.state.value) {
+            return;
+        }
         this.setState({
             value: value,
             errorMessage: ''
         }, this._adjustInputHeight);
-        this._willMountTriggerValidation = false;
         var _a = this.props, validateOnFocusIn = _a.validateOnFocusIn, validateOnFocusOut = _a.validateOnFocusOut;
         if (!(validateOnFocusIn || validateOnFocusOut)) {
             this._delayedValidate(value);
@@ -30108,16 +30070,13 @@ var TextField = (function (_super) {
         }
     };
     TextField.prototype._notifyAfterValidate = function (value, errorMessage) {
-        if (!this._willMountTriggerValidation && value === this.state.value) {
+        if (value === this.state.value) {
             var onNotifyValidationResult = this.props.onNotifyValidationResult;
             onNotifyValidationResult(errorMessage, value);
             if (!errorMessage) {
                 var onChanged = this.props.onChanged;
                 onChanged(value);
             }
-        }
-        else {
-            this._willMountTriggerValidation = false;
         }
     };
     TextField.prototype._adjustInputHeight = function () {
@@ -30127,15 +30086,6 @@ var TextField = (function (_super) {
             var scrollHeight = textField.scrollHeight + 2; // +2 to avoid vertical scroll bars
             textField.style.height = scrollHeight + 'px';
         }
-    };
-    TextField.prototype._onChange = function () {
-        /**
-         * A noop input change handler.
-         * https://github.com/facebook/react/issues/7027.
-         * Using the native onInput handler fixes the issue but onChange
-         * still need to be wired to avoid React console errors
-         * TODO: Check if issue is resolved when React 16 is available.
-         */
     };
     return TextField;
 }(Utilities_1.BaseComponent));
@@ -30151,7 +30101,8 @@ TextField.defaultProps = {
     deferredValidationTime: 200,
     errorMessage: '',
     validateOnFocusIn: false,
-    validateOnFocusOut: false
+    validateOnFocusOut: false,
+    validateOnLoad: true,
 };
 exports.TextField = TextField;
 
@@ -30303,21 +30254,21 @@ exports.Toggle = Toggle;
 /* tslint:disable */
 var load_themed_styles_1 = __webpack_require__(3);
 var styles = {
-    root: 'root_2c76bd6f',
-    isEnabled: 'isEnabled_2b498c35',
-    button: 'button_a9119ca6',
-    background: 'background_d6ce45e2',
-    thumb: 'thumb_7623443f',
-    slider: 'slider_d189b96f',
-    isChecked: 'isChecked_8442dc02',
-    isDisabled: 'isDisabled_ffd4783c',
-    innerContainer: 'innerContainer_3ffa27f6',
-    focus: 'focus_d87846e1',
-    stateText: 'stateText_c8046cc9',
+    root: 'root_d2d8a8e9',
+    isEnabled: 'isEnabled_4c8febfe',
+    button: 'button_33ab30aa',
+    background: 'background_2b01edfa',
+    thumb: 'thumb_063ff1ba',
+    slider: 'slider_fe7b2c0a',
+    isChecked: 'isChecked_3bd83173',
+    isDisabled: 'isDisabled_93d4f87b',
+    innerContainer: 'innerContainer_56814048',
+    focus: 'focus_43418be5',
+    stateText: 'stateText_e5dded01',
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = styles;
-load_themed_styles_1.loadStyles([{ "rawString": ".root_2c76bd6f{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;font-weight:400;box-sizing:border-box;margin:0;padding:0;box-shadow:none;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";position:relative;display:block;margin-bottom:8px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isEnabled_2b498c35 .button_a9119ca6{cursor:pointer}.isEnabled_2b498c35 .background_d6ce45e2{border:1px solid " }, { "theme": "neutralSecondaryAlt", "defaultValue": "#767676" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isEnabled_2b498c35 .thumb_7623443f{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_2b498c35 .thumb_7623443f{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}.isEnabled_2b498c35 .slider_d189b96f:hover .background_d6ce45e2{border:1px solid " }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}.isEnabled_2b498c35 .slider_d189b96f:hover .thumb_7623443f{background:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}.isEnabled_2b498c35.isChecked_8442dc02 .background_d6ce45e2{background:" }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": ";border:1px solid " }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isEnabled_2b498c35.isChecked_8442dc02 .background_d6ce45e2{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_2b498c35.isChecked_8442dc02 .background_d6ce45e2{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}.isEnabled_2b498c35.isChecked_8442dc02 .thumb_7623443f{background:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}html[dir=ltr] .isEnabled_2b498c35.isChecked_8442dc02 .thumb_7623443f{left:28px}html[dir=rtl] .isEnabled_2b498c35.isChecked_8442dc02 .thumb_7623443f{right:28px}@media screen and (-ms-high-contrast:active){.isEnabled_2b498c35.isChecked_8442dc02 .thumb_7623443f{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_2b498c35.isChecked_8442dc02 .thumb_7623443f{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}.isEnabled_2b498c35.isChecked_8442dc02 .slider_d189b96f:hover .background_d6ce45e2{border:1px solid " }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": ";background:" }, { "theme": "themeSecondary", "defaultValue": "#2b88d8" }, { "rawString": "}.isEnabled_2b498c35.isChecked_8442dc02 .slider_d189b96f:hover .thumb_7623443f{background:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}.isDisabled_ffd4783c .thumb_7623443f{background:" }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isDisabled_ffd4783c .thumb_7623443f{background-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_ffd4783c .thumb_7623443f{background-color:#600000}}.isDisabled_ffd4783c .background_d6ce45e2{border:1px solid " }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isDisabled_ffd4783c .background_d6ce45e2{border-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_ffd4783c .background_d6ce45e2{border-color:#600000}}.isDisabled_ffd4783c.isChecked_8442dc02 .background_d6ce45e2{background:" }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": ";border:1px solid transparent}@media screen and (-ms-high-contrast:active){.isDisabled_ffd4783c.isChecked_8442dc02 .background_d6ce45e2{background-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_ffd4783c.isChecked_8442dc02 .background_d6ce45e2{background-color:#600000}}.isDisabled_ffd4783c.isChecked_8442dc02 .thumb_7623443f{background:" }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": "}html[dir=ltr] .isDisabled_ffd4783c.isChecked_8442dc02 .thumb_7623443f{left:28px}html[dir=rtl] .isDisabled_ffd4783c.isChecked_8442dc02 .thumb_7623443f{right:28px}@media screen and (-ms-high-contrast:active){.isDisabled_ffd4783c.isChecked_8442dc02 .thumb_7623443f{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_ffd4783c.isChecked_8442dc02 .thumb_7623443f{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}.innerContainer_3ffa27f6{display:inline-block}.ms-Fabric.is-focusVisible .root_2c76bd6f.isEnabled_2b498c35 .button_a9119ca6:focus+.background_d6ce45e2 .focus_d87846e1{border:1px solid " }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": "}.button_a9119ca6{position:absolute;opacity:0;left:0;top:0;width:100%;height:100%;margin:0;padding:0}.slider_d189b96f{position:relative;min-height:20px}.background_d6ce45e2{display:inline-block;position:absolute;width:44px;height:20px;box-sizing:border-box;vertical-align:middle;border-radius:20px;cursor:pointer;-webkit-transition:all .1s ease;transition:all .1s ease;pointer-events:none}.thumb_7623443f{position:absolute;width:10px;height:10px;border-radius:10px;top:4px;background:" }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": ";-webkit-transition:all .1s ease;transition:all .1s ease}html[dir=ltr] .thumb_7623443f{left:4px}html[dir=rtl] .thumb_7623443f{right:4px}.stateText_c8046cc9{display:inline-block;vertical-align:top;line-height:20px;padding:0}html[dir=ltr] .stateText_c8046cc9{margin-left:54px}html[dir=rtl] .stateText_c8046cc9{margin-right:54px}.focus_d87846e1{position:absolute;left:-3px;top:-3px;right:-3px;bottom:-3px;box-sizing:border-box;outline:transparent}" }]);
+load_themed_styles_1.loadStyles([{ "rawString": ".root_d2d8a8e9{font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-family:\"Segoe UI WestEuropean\",\"Segoe UI\",-apple-system,BlinkMacSystemFont,Roboto,\"Helvetica Neue\",sans-serif;-webkit-font-smoothing:antialiased;font-size:14px;font-weight:400;box-sizing:border-box;margin:0;padding:0;box-shadow:none;color:" }, { "theme": "neutralPrimary", "defaultValue": "#333333" }, { "rawString": ";position:relative;display:block;margin-bottom:8px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.isEnabled_4c8febfe .button_33ab30aa{cursor:pointer}.isEnabled_4c8febfe .background_2b01edfa{border:1px solid " }, { "theme": "neutralSecondaryAlt", "defaultValue": "#767676" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isEnabled_4c8febfe .thumb_063ff1ba{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_4c8febfe .thumb_063ff1ba{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}.isEnabled_4c8febfe .slider_fe7b2c0a:hover .background_2b01edfa{border:1px solid " }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}.isEnabled_4c8febfe .slider_fe7b2c0a:hover .thumb_063ff1ba{background:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}.isEnabled_4c8febfe.isChecked_3bd83173 .background_2b01edfa{background:" }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": ";border:1px solid " }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isEnabled_4c8febfe.isChecked_3bd83173 .background_2b01edfa{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_4c8febfe.isChecked_3bd83173 .background_2b01edfa{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}.isEnabled_4c8febfe.isChecked_3bd83173 .thumb_063ff1ba{background:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}html[dir=ltr] .isEnabled_4c8febfe.isChecked_3bd83173 .thumb_063ff1ba{left:28px}html[dir=rtl] .isEnabled_4c8febfe.isChecked_3bd83173 .thumb_063ff1ba{right:28px}@media screen and (-ms-high-contrast:active){.isEnabled_4c8febfe.isChecked_3bd83173 .thumb_063ff1ba{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isEnabled_4c8febfe.isChecked_3bd83173 .thumb_063ff1ba{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}.isEnabled_4c8febfe.isChecked_3bd83173 .slider_fe7b2c0a:hover .background_2b01edfa{border:1px solid " }, { "theme": "themePrimary", "defaultValue": "#0078d7" }, { "rawString": ";background:" }, { "theme": "themeSecondary", "defaultValue": "#2b88d8" }, { "rawString": "}.isEnabled_4c8febfe.isChecked_3bd83173 .slider_fe7b2c0a:hover .thumb_063ff1ba{background:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}.isDisabled_93d4f87b .thumb_063ff1ba{background:" }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isDisabled_93d4f87b .thumb_063ff1ba{background-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_93d4f87b .thumb_063ff1ba{background-color:#600000}}.isDisabled_93d4f87b .background_2b01edfa{border:1px solid " }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": "}@media screen and (-ms-high-contrast:active){.isDisabled_93d4f87b .background_2b01edfa{border-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_93d4f87b .background_2b01edfa{border-color:#600000}}.isDisabled_93d4f87b.isChecked_3bd83173 .background_2b01edfa{background:" }, { "theme": "neutralTertiaryAlt", "defaultValue": "#c8c8c8" }, { "rawString": ";border:1px solid transparent}@media screen and (-ms-high-contrast:active){.isDisabled_93d4f87b.isChecked_3bd83173 .background_2b01edfa{background-color:#0f0}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_93d4f87b.isChecked_3bd83173 .background_2b01edfa{background-color:#600000}}.isDisabled_93d4f87b.isChecked_3bd83173 .thumb_063ff1ba{background:" }, { "theme": "neutralLight", "defaultValue": "#eaeaea" }, { "rawString": "}html[dir=ltr] .isDisabled_93d4f87b.isChecked_3bd83173 .thumb_063ff1ba{left:28px}html[dir=rtl] .isDisabled_93d4f87b.isChecked_3bd83173 .thumb_063ff1ba{right:28px}@media screen and (-ms-high-contrast:active){.isDisabled_93d4f87b.isChecked_3bd83173 .thumb_063ff1ba{background-color:" }, { "theme": "black", "defaultValue": "#000000" }, { "rawString": "}}@media screen and (-ms-high-contrast:black-on-white){.isDisabled_93d4f87b.isChecked_3bd83173 .thumb_063ff1ba{background-color:" }, { "theme": "white", "defaultValue": "#ffffff" }, { "rawString": "}}.innerContainer_56814048{display:inline-block}.ms-Fabric.is-focusVisible .root_d2d8a8e9.isEnabled_4c8febfe .button_33ab30aa:focus+.background_2b01edfa .focus_43418be5{border:1px solid " }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": "}.button_33ab30aa{position:absolute;opacity:0;left:0;top:0;width:100%;height:100%;margin:0;padding:0}.slider_fe7b2c0a{position:relative;min-height:20px}.background_2b01edfa{display:inline-block;position:absolute;width:44px;height:20px;box-sizing:border-box;vertical-align:middle;border-radius:20px;cursor:pointer;-webkit-transition:all .1s ease;transition:all .1s ease;pointer-events:none}.thumb_063ff1ba{position:absolute;width:10px;height:10px;border-radius:10px;top:4px;background:" }, { "theme": "neutralSecondary", "defaultValue": "#666666" }, { "rawString": ";-webkit-transition:all .1s ease;transition:all .1s ease}html[dir=ltr] .thumb_063ff1ba{left:4px}html[dir=rtl] .thumb_063ff1ba{right:4px}.stateText_e5dded01{display:inline-block;vertical-align:top;line-height:20px;padding:0}html[dir=ltr] .stateText_e5dded01{margin-left:54px}html[dir=rtl] .stateText_e5dded01{margin-right:54px}.focus_43418be5{position:absolute;left:-3px;top:-3px;right:-3px;bottom:-3px;box-sizing:border-box;outline:transparent}" }]);
 /* tslint:enable */ 
 
 //# sourceMappingURL=Toggle.scss.js.map
